@@ -1,0 +1,8 @@
+#!/bin/bash
+#??Stop all running docker containers
+#&&docker
+
+docker stop $(docker ps -aq)
+
+echo ""
+echo "All running docker containers have been stopped."

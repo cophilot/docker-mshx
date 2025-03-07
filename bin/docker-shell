@@ -1,0 +1,30 @@
+#!/bin/bash
+#??Open a shell in a running docker container
+#&&docker
+###Open a shell in a running docker container
+###An interactive script that lists all running docker containers and allows the user to open a shell in one of them
+###Usage: docker-shell
+
+container_names=$(docker ps --format '{{.Names}}')
+
+count=0
+for container_name in $container_names
+do
+    echo "[$count] $container_name"
+    count=$((count+1))
+done
+
+while true
+do
+    read -p "Enter the number of the container you want to open a shell in: " container_number
+
+    if [ $container_number -lt $count ]
+    then
+        container_number=$((container_number+1))
+        container_name=$(echo $container_names | cut -d ' ' -f $container_number)
+        docker exec -it $container_name /bin/bash
+        break
+    else
+        echo "Invalid container number"
+    fi
+done
