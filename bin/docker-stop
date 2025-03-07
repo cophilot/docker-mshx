@@ -1,6 +1,7 @@
 #!/bin/bash
 #??Stop all running docker containers
-#&&docker
+#&&docker,mshx
+###Usage: docker-stop
 
 docker stop $(docker ps -aq)
 

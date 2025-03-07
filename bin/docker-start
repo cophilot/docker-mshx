@@ -1,6 +1,7 @@
 #!/bin/bash
 #??Start all docker containers
-#&&docker
+#&&docker,mshx
+###Usage: docker-start
 
 docker start $(docker ps -aq)
 

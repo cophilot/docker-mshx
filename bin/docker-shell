@@ -1,7 +1,6 @@
 #!/bin/bash
 #??Open a shell in a running docker container
-#&&docker
-###Open a shell in a running docker container
+#&&docker,mshx
 ###An interactive script that lists all running docker containers and allows the user to open a shell in one of them
 ###Usage: docker-shell
 
