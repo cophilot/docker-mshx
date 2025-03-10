@@ -1,0 +1,44 @@
+#!/bin/bash
+#??Open the logs of ALL running docker containers
+#&&docker,mshx
+###Usage: docker-logs [options]
+###Options:
+###    -h   Display this help message
+###    -s   Save the logs to a file
+
+save_logs=false
+
+while getopts ":hs" opt
+do
+    case $opt in
+        h)
+            msh m docker-logs
+            exit 0
+            ;;
+        s)
+            save_logs=true
+            ;;
+        \?)
+            echo "Invalid option: -$OPTARG" >&2
+            exit 1
+            ;;
+    esac
+done
+
+container_names=$(docker ps --format '{{.Names}}')
+
+logs="$(date)\n\n"
+for container_name in $container_names
+do
+    l=$(docker logs $container_name 2>&1)
+    upper_container_name=$(echo $container_name | tr '[:lower:]' '[:upper:]')
+    logs="$logs~~~ $upper_container_name ~~~\n\n$l\n\n\n\n\n"
+done
+
+echo -e "$logs" | less -R -N
+
+if [ $save_logs = true ]
+then
+    echo -e "$logs" > docker.log
+    echo "Logs saved to docker.log"
+fi

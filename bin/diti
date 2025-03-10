@@ -1,0 +1,80 @@
+#!/bin/bash
+#??Docker InTeractive Interface
+#&&docker,mshx
+###An interactive script to manage docker containers
+###Usage: diti
+
+container_names=$(docker ps --format '{{.Names}}' -a)
+
+count=0
+for container_name in $container_names
+do
+    is_running=$(docker inspect --format='{{.State.Running}}' $container_name)
+    tag=""
+    if [ $is_running == "false" ]
+    then
+        tag=" (STOPPED)"
+    fi
+    echo " [$count] $container_name$tag"
+    count=$((count+1))
+done
+
+cname=""
+
+while true
+do
+    read -p "Enter the number of the container you want to open a shell in: " container_number
+
+    if [ $container_number -lt $count ]
+    then
+        container_number=$((container_number+1))
+        cname=$(echo $container_names | cut -d ' ' -f $container_number)
+        break
+    else
+        echo "Invalid container number"
+    fi
+done
+
+commands="blqrs"
+echo ""
+echo "Commands:"
+echo " [b] Open bash shell"
+echo " [l] View logs"
+echo " [s] Start container"
+echo " [q] Stop container"
+echo " [r] Restart container"
+
+com=""
+
+while true
+do
+    read -p "Enter the command you want to run: " command
+
+    if [[ $commands == *$command* ]]
+    then
+        com="$command"
+        break
+    else
+        echo "Invalid command"
+    fi
+done
+
+if [ $com == "b" ]
+then
+    docker-bash $cname
+elif [ $com == "l" ]
+then
+    docker-log $cname
+elif [ $com == "s" ]
+then
+    docker start $cname
+    echo "Container started"
+elif [ $com == "q" ]
+then
+    docker stop $cname
+    echo "Container stopped"
+elif [ $com == "r" ]
+then
+    docker restart $cname
+    echo "Container restarted"
+fi
