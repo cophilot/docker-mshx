@@ -2,7 +2,7 @@
 #??List all running docker containers
 #&&docker,mshx
 ###List the ID, Name and Status
-###Usage: docker-ps [options]
+###Usage: dps [options]
 ###Options:
 ###  -p  Show the ports of the containers
 
