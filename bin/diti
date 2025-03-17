@@ -2,9 +2,18 @@
 #??Docker InTeractive Interface
 #&&docker,mshx
 ###An interactive script to manage docker containers
-###Usage: diti
+###Usage: diti [container-number] [command]
+###container-number and command are optional
+###Commands:
+### [b] Open bash shell
+### [l] View logs
+### [s] Start container
+### [q] Stop container
+### [r] Restart container
 
 container_names=$(docker ps --format '{{.Names}}' -a)
+
+container_number=$1
 
 count=0
 for container_name in $container_names
@@ -15,38 +24,55 @@ do
     then
         tag=" (STOPPED)"
     fi
-    echo " [$count] $container_name$tag"
+
+    if [ "$container_number" == "" ]
+    then
+        echo " [$count] $container_name$tag"
+    fi
+
     count=$((count+1))
 done
 
-cname=""
 
-while true
+
+while [ -z $container_number ]
 do
     read -p "Enter the number of the container you want to open a shell in: " container_number
 
     if [ $container_number -lt $count ]
     then
-        container_number=$((container_number+1))
-        cname=$(echo $container_names | cut -d ' ' -f $container_number)
         break
     else
         echo "Invalid container number"
+        container_number=""
     fi
 done
 
+if [ $container_number -ge $count ]
+then
+    echo "Invalid container number: $container_number"
+    exit 1
+fi
+
+container_number=$((container_number+1))
+cname=$(echo $container_names | cut -d ' ' -f $container_number)
+
 commands="blqrs"
-echo ""
-echo "Commands:"
-echo " [b] Open bash shell"
-echo " [l] View logs"
-echo " [s] Start container"
-echo " [q] Stop container"
-echo " [r] Restart container"
+com=$2
 
-com=""
+if [ "$com" == "" ]
+then
+    echo ""
+    echo "Commands:"
+    echo " [b] Open bash shell"
+    echo " [l] View logs"
+    echo " [s] Start container"
+    echo " [q] Stop container"
+    echo " [r] Restart container"
+fi
 
-while true
+
+while [ -z $com ]
 do
     read -p "Enter the command you want to run: " command
 
@@ -56,6 +82,7 @@ do
         break
     else
         echo "Invalid command"
+        com=""
     fi
 done
 
@@ -77,4 +104,7 @@ elif [ $com == "r" ]
 then
     docker restart $cname
     echo "Container restarted"
+else
+    echo "Invalid command: $com"
+    exit 1
 fi
