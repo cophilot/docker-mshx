@@ -37,7 +37,7 @@ done
 
 while [ -z $container_number ]
 do
-    read -p "Enter the number of the container you want to open a shell in: " container_number
+    read -p "Enter the number of the container you want to use: " container_number
 
     if [ $container_number -lt $count ]
     then
